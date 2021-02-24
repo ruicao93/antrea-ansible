@@ -1,0 +1,9 @@
+- include: common.yml
+
+- name: Install OVS
+  include_tasks: install_ovs.yml
+  when: not (install_ovs is defined and install_ovs|bool == false) and not ovs_service.exists
+
+- name: Uninstall OVS
+  include_tasks: uninstall_ovs.yml
+  when: install_ovs is defined and install_ovs|bool == false

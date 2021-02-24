@@ -1,0 +1,64 @@
+- name: Copy Get-NSXOVS.ps1
+  win_copy:
+    src: scripts/Get-NSXOVS.ps1
+    dest: "{{antrea_ansible_path}}\\Get-NSXOVS.ps1"
+    timeout: 60
+    force: no
+  retries: 3
+  when: ovs_type is defined and ovs_type|lower == "nsx"
+
+- name: Download NSX-OVS
+  win_shell: |
+    $ErrorActionPreference = "Stop"
+    cd {{antrea_ansible_path}}
+    ./Get-NSXOVS.ps1 -OVSUrl {{nsx_ovs_url}} -VCRedistUrl {{vcredist_url}} -ExtractCertificate $true
+  register: install_result
+  when: ovs_type is defined and ovs_type|lower == "nsx"
+
+
+- name: Download Install-OVS.ps1
+  win_get_url:
+    url: "{{install_ovs_ps_url}}"
+    dest: "{{antrea_ansible_path}}\\Install-OVS.ps1"
+    timeout: 60
+    force: no
+  retries: 3
+
+- name: Install NSX-OVS
+  become: yes
+  become_method: runas
+  become_user: SYSTEM
+  win_shell: |
+    $ErrorActionPreference = "Stop"
+    cd {{antrea_ansible_path}}
+    ./Install-OVS.ps1 -LocalFile ovs-win64.zip
+  register: nsxovs_install_result
+  when: ovs_type is defined and ovs_type|lower == "nsx"
+
+
+- name: Install upsteam OVS
+  become: yes
+  become_method: runas
+  become_user: SYSTEM
+  win_shell: |
+    $ErrorActionPreference = "Stop"
+    cd {{antrea_ansible_path}}
+    rm -Force ovs-win64.zip -ErrorAction SilentlyContinue
+    ./Install-OVS.ps1
+  register: ovs_install_result
+  when: not (ovs_type is defined and ovs_type|lower == "nsx")
+
+- name: Update result
+  set_fact:
+    install_result: "{{ nsxovs_install_result if nsxovs_install_result.changed else ovs_install_result}}"
+
+- name: Reboot
+  win_reboot:
+    pre_reboot_delay: 5
+    post_reboot_delay: 10
+  register: reboot
+  when: install_result.rc is defined and install_result.rc == 0
+
+- name: Check OVS version
+  include_tasks: check_ovs.yml
+  when: reboot.rebooted is defined and reboot.rebooted

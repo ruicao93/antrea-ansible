@@ -1,0 +1,5 @@
+antrea_ansible_path: "c:\\antrea-ansible"
+get_nsx_ovs_ps_url: https://raw.githubusercontent.com/ruicao93/antrea/nsx_ovs_get/hack/windows/Get-NSXOVS.ps1
+install_ovs_ps_url: https://raw.githubusercontent.com/vmware-tanzu/antrea/main/hack/windows/Install-OVS.ps1
+ovs_installation_path: "c:\\openvswitch"
+ovs_version: 2.13.1.38433

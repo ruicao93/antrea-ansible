@@ -1,0 +1,15 @@
+- name: Get OVS version
+  become: yes
+  become_method: runas
+  become_user: SYSTEM
+  win_shell: |
+    ovs-vsctl show
+  register: ovs_show
+  when: ovs_version is defined
+
+- name: Check OVS version
+  assert:
+    that:
+      - ovs_show.stdout.find('{{ovs_version}}') != -1
+    fail_msg: OVS version is not expected
+    success_msg: OVS version is as expected

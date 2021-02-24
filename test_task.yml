@@ -1,0 +1,21 @@
+- hosts: windows
+  tasks:
+    - name: Remove docker.pid if docker is not running
+      win_file:
+        path: "C:\\ProgramData\\docker\\docker.pid"
+        state: absent
+    - name: Start docker service
+      win_shell: |
+        $ErrorActionPreference = "Stop"
+        Restart-Service Docker
+    - name: Get docker service
+      win_service:
+        name: docker
+      register: docker_service
+    - name: debug
+      debug:
+        var: docker_service
+    - name: debug2
+      debug:
+        var: docker_service.state == "running"
+    

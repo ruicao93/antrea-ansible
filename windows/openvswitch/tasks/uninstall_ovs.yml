@@ -1,0 +1,28 @@
+- name: Copy Uninstall-OVS.ps1
+  win_copy:
+    src: scripts/Uninstall-OVS.ps1
+    dest: "{{antrea_ansible_path}}\\Uninstall-OVS.ps1"
+    timeout: 60
+    force: no
+  retries: 3
+  when: ovs_service.exists
+
+- name: Uninstall OVS
+  become: yes
+  become_method: runas
+  become_user: SYSTEM
+  win_shell: |
+    cd {{antrea_ansible_path}}
+    ovs-vsctl.exe show
+    ./Uninstall-OVS.ps1
+  register: uninstall_result
+  when: ovs_service.exists
+
+- name: Remove OVS directory
+  win_file:
+    path: "{{ovs_installation_path}}"
+    state: absent
+
+- name: Reboot
+  win_reboot:
+  when: uninstall_result.rc is defined and uninstall_result.rc == 0

@@ -1,0 +1,13 @@
+[windows]
+192.158.1.1 ovs_type=nsx install_ovs=true comment="containerd + hyperv + nsx-ovs (containerd CI)"
+
+[windows:vars]
+ansible_user=placeholder
+ansible_password="placeholder"
+ansible_connection=winrm
+ansible_winrm_transport=basic
+ansible_ssh_common_args='-o StrictHostKeyChecking=no'
+ansible_winrm_server_cert_validation=ignore
+ovs_version="placeholder"
+nsx_ovs_url="placeholder"
+vcredist_url="placeholder"

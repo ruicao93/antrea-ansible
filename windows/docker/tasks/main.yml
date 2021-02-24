@@ -1,0 +1,15 @@
+- name: Get Docker service
+  win_service:
+    name: docker
+  register: docker_service
+
+- name: Remove docker.pid if docker is not running
+  win_file:
+    path: "{{docker_pid_path}}"
+    state: absent
+  when: docker_service.state != "running"
+
+- name: Start docker service
+  win_shell: |
+    Restart-Service Docker
+  when: docker_service.state != "running"
