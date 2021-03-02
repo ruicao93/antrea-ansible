@@ -1,0 +1,4 @@
+- name: Check if kubelet services exist
+  win_service:
+    name: kubelet
+  register: kubelet_service

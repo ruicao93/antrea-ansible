@@ -1,8 +1,19 @@
 - hosts: windows
   tasks:
+    - name: Prereuqired tasks
+      import_role:
+        name: windows/init
     - name: Manage OVS installation
       import_role:
         name: windows/openvswitch
     - name: Start Docker service
       import_role:
         name: windows/docker
+    - name: Install containerd
+      import_role:
+        name: windows/containerd
+      when: cri_runtime is defined and cri_runtime|lower == "containerd"
+    - name: Join node
+      import_role:
+        name: windows/kubernetes
+      when: join_node is defined and join_node|lower == "true"

@@ -1,0 +1,12 @@
+- name: Create work dir
+  win_file:
+    path: "{{antrea_ansible_path}}"
+    state: directory
+
+- name: Copy Helper.psm1
+  win_copy:
+    src: scripts/Helper.psm1
+    dest: "{{antrea_ansible_path}}\\Helper.psm1"
+    timeout: 60
+    force: no
+  retries: 3

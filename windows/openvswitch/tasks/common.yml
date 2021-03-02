@@ -1,8 +1,3 @@
-- name: Create work dir
-  win_file:
-    path: "{{antrea_ansible_path}}"
-    state: directory
-
 - name: Check if OVS services exist
   win_service:
     name: ovsdb-server

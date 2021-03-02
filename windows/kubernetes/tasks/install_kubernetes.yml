@@ -1,0 +1,22 @@
+- name: Download PrepareNode.ps1
+  win_get_url:
+    url: "https://raw.githubusercontent.com/kubernetes-sigs/sig-windows-tools/master/kubeadm/scripts/PrepareNode.ps1"
+    dest: "{{antrea_ansible_path}}\\PrepareNode.ps1"
+    timeout: 60
+    force: no
+  retries: 3
+
+- name: Prepare node
+  become: yes
+  become_method: runas
+  become_user: SYSTEM
+  win_shell: |
+    $ErrorActionPreference = "Continue"
+    ./PrepareNode.ps1 -KubernetesVersion v1.19.2 -ContainerRuntime containerD
+  args:
+    chdir: "{{antrea_ansible_path}}"
+
+- name: Check if kubelet services exist
+  win_service:
+    name: kubelet
+  register: kubelet_service

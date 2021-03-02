@@ -1,0 +1,22 @@
+- name: Copy Reset-KubeNode.ps1
+  win_copy:
+    src: scripts/Reset-KubeNode.ps1
+    dest: "{{antrea_ansible_path}}\\Reset-KubeNode.ps1"
+    timeout: 60
+    force: no
+  retries: 3
+
+- name: Reset node
+  become: yes
+  become_method: runas
+  become_user: SYSTEM
+  win_shell: |
+    $ErrorActionPreference = "Continue"
+    ./Reset-KubeNode.ps1
+  args:
+   chdir: "{{antrea_ansible_path}}"
+
+- win_reboot:
+    pre_reboot_delay: 5
+    post_reboot_delay: 15
+  register: reboot
