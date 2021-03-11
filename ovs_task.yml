@@ -1,0 +1,9 @@
+- hosts: windows
+  tasks:
+    - name: Prereuqired tasks
+      import_role:
+        name: windows/init
+    - name: Manage OVS installation
+      import_role:
+        name: windows/openvswitch
+

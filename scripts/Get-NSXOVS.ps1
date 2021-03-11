@@ -21,8 +21,7 @@
     Specifies if extract certificate from driver file.
 
 .EXAMPLE
-    The example below does blah
-    PS C:\> .\Get-NSXOVS.ps1
+    PS C:\> .\Get-NSXOVS.ps1 -OVSUrl $NSXOVSUrl -VCRedistUrl $VCRedistUrl
 
 #>
 Param(
